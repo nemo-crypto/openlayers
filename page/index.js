@@ -5,10 +5,10 @@ window.onload = function () {
     $("input:radio[value='0']").attr('checked','checked');
 
     //初始化地图中心坐标--故宫博物馆
-    var beijing = ol.proj.fromLonLat([116.39630783081054, 39.919226074218756]);
+    let beijing = ol.proj.fromLonLat([116.39630783081054, 39.919226074218756]);
 
     //数据源
-    var gaodeMapLayer = new ol.layer.Tile({
+    let gaodeMapLayer = new ol.layer.Tile({
         source: new ol.source.XYZ({
             /*在线高德数据源*/
             url: 'http://wprd0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&style=7&x={x}&y={y}&z={z}'
@@ -16,7 +16,7 @@ window.onload = function () {
     });
 
     //初始化地图  16-10 17-20 18-40 19-80 20-160
-    var map = new ol.Map({
+    let map = new ol.Map({
         target: 'map',
         layers: [gaodeMapLayer],
         view: new ol.View({
@@ -61,7 +61,7 @@ window.onload = function () {
 
 
     //创建自定义标签的样式
-    var createLabelStyle = function (feature) {
+    let createLabelStyle = function (feature) {
         //返回一个样式
         return new ol.style.Style({
             // stroke: new ol.style.Stroke({ //边界样式
@@ -110,7 +110,7 @@ window.onload = function () {
     };
 
     /*测试假数据--后台返回数据格式*/
-    var orgData = [
+    let orgData = [
         {
             name:'北京银行',
             id:'11111099',
@@ -149,12 +149,12 @@ window.onload = function () {
     ];
 
     /*创建--标注物*/
-    for(var i = 0; i < orgData.length; i++) {
+    for(let i = 0; i < orgData.length; i++) {
         //标注物-坐标转化
-        var point = ol.proj.fromLonLat(orgData[i].points);
+        let point = ol.proj.fromLonLat(orgData[i].points);
 
         //初始化要素
-        var iconFeature = new ol.Feature({
+        let iconFeature = new ol.Feature({
             //点要素
             geometry: new ol.geom.Point(point),
             //名称属性
@@ -166,13 +166,13 @@ window.onload = function () {
         iconFeature.setStyle(createLabelStyle(iconFeature));
 
         //初始化矢量数据源
-        var vectorSource = new ol.source.Vector({
+        let vectorSource = new ol.source.Vector({
             //指定要素
             features:[iconFeature]
         });
 
         //初始化矢量图层
-        var vectorLayer = new ol.layer.Vector({
+        let vectorLayer = new ol.layer.Vector({
             //数据源
             source:vectorSource
         });
@@ -182,18 +182,18 @@ window.onload = function () {
 
         /**************覆盖层--start************/
 
-        var markerId = 'marker_' +i;
-        var	newAddHTML = '<div id="'+ markerId +'"  class="marker" title="'+ orgData[i].name+'">'+
+        let markerId = 'marker_' +i;
+        let	newAddHTML = '<div id="'+ markerId +'"  class="marker" title="'+ orgData[i].name+'">'+
                             '<div class="pulse"></div>'+
                             '<div class="pulse1"></div>'+
                          '</div>';
 
-        var $newAddImgs = $( newAddHTML );
+        let $newAddImgs = $( newAddHTML );
         $('#label').append( $newAddImgs );
 
 
         //初始化覆盖层标注
-        var marker = new ol.Overlay({
+        let marker = new ol.Overlay({
                 //位置坐标
                 position: point,
                 //覆盖层如何与位置坐标匹配
@@ -211,7 +211,7 @@ window.onload = function () {
 
     //监听地图缩放级别事件moveend
     map.on('moveend',function(e){
-        var zoom = map.getView().getZoom();  //获取当前地图的缩放级别
+        let zoom = map.getView().getZoom();  //获取当前地图的缩放级别
         console.log('当前地图的层级'+zoom);
         if( zoom < 16 ) {
 
@@ -221,9 +221,9 @@ window.onload = function () {
 
 
 
-            // var a = vectorLayer;
-            // var b = vectorSource;
-            // var c = iconFeature;
+            // let a = vectorLayer;
+            // let b = vectorSource;
+            // let c = iconFeature;
             // // console.log('vectorLayer'+vectorLayer);
             // // console.log('vectorSource'+vectorSource);
             // // console.log('iconFeature'+iconFeature);
@@ -242,14 +242,14 @@ window.onload = function () {
     //地图的点击事件
     map.on('click', function (evt) {
         //获取点击当前坐标的时间
-        var curDate = new Date();
-        var onoverTime = curDate.toLocaleTimeString();
-        var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+        let curDate = new Date();
+        let onoverTime = curDate.toLocaleTimeString();
+        let feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
             return feature;
         });
-        var clickPoint = evt.coordinate;
+        let clickPoint = evt.coordinate;
         if (feature) {
-            var layName = feature.values_.name;
+            let layName = feature.values_.name;
             layer.open({
                 type: 1
                 ,title: layName //不显示标题栏
@@ -270,7 +270,7 @@ window.onload = function () {
             });
         }else {
             //没有标注物的地方点击出发增加标注物function
-            var type = $('.type input[name="addAnddel"]:checked').val();
+            let type = $('.type input[name="addAnddel"]:checked').val();
             if(type == '0') {
                 //无操作
             }else if( type == '1'){
@@ -290,7 +290,7 @@ window.onload = function () {
     //添加矢量标签
     function addVectorLabel(coordinate) {
         //初始化一个新的点要素
-        var newFeature = new ol.Feature({
+        let newFeature = new ol.Feature({
             geometry: new ol.geom.Point(coordinate),
             name: '标注点'
         });
@@ -303,19 +303,19 @@ window.onload = function () {
     //添加覆盖标注
     function addOverlayLabel(coordinate) {
         //创建一个div元素
-        var elementDiv = document.createElement('div');
+        let elementDiv = document.createElement('div');
         //设置div元素的样式类
         elementDiv.className = 'marker';
         //设置div元素的title属性
         elementDiv.title = '标注点';
 
         //获取id为label的div标签
-        var overlay = document.getElementById('label');
+        let overlay = document.getElementById('label');
         //将新创建的div标签添加到overlay中
         overlay.appendChild(elementDiv);
 
         //创建一个a标签元素
-        var elementA = document.createElement('a');
+        let elementA = document.createElement('a');
         //设置a标签的样式类
         elementA.className = 'address';
         //设置a标签的链接地址
@@ -326,7 +326,7 @@ window.onload = function () {
         elementDiv.appendChild(elementA);
 
         //新建一个覆盖层
-        var newMarker = new ol.Overlay({
+        let newMarker = new ol.Overlay({
             //设置位置为当前鼠标点击的坐标
             position: coordinate,
             //设置覆盖层与位置之间的匹配方式
@@ -340,7 +340,7 @@ window.onload = function () {
         map.addOverlay(newMarker);
 
         //新建一个文本覆盖层
-        var newText = new ol.Overlay({
+        let newText = new ol.Overlay({
             //设置位置为当前鼠标点击的坐标
             position: coordinate,
             //覆盖层元素
