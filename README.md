@@ -65,4 +65,4 @@ npm run preview                # 预览生产构建
 
 在线 OpenStreetMap 会向提供方请求瓦片，需遵守其署名和服务使用政策；离线示意模式不需要外部服务。本 Demo 没有定位权限请求或后台位置采集。
 
-阅读：[架构设计](docs/architecture.md) · [五节实践课](docs/learning-path.md)。旧代码可能仍存在 Git 历史中，本次没有改写历史或推送。
+阅读：[架构设计](docs/architecture.md) · [五节实践课](docs/learning-path.md)。旧代码可能仍存在 Git 历史中，教学版发布未改写旧 Git 历史。
