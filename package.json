@@ -1,0 +1,41 @@
+{
+  "name": "map-learning-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "tsc -p tests/tsconfig.json && node --test tests/*.test.mjs",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build"
+  },
+  "dependencies": {
+    "ol": "10.11.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "^6.4.1",
+    "@playwright/test": "1.58.2"
+  },
+  "description": "OpenLayers 10 + TypeScript Web GIS tutorial with offline maps, drawing, editing, measurement and GeoJSON import/export. 交互地图教学 Demo，支持移动端与 Playwright 测试。",
+  "keywords": [
+    "openlayers",
+    "webgis",
+    "gis",
+    "maps",
+    "geojson",
+    "typescript",
+    "geospatial",
+    "vite",
+    "tutorial"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nemo-crypto/openlayers.git"
+  }
+}

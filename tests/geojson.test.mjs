@@ -1,0 +1,8 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { validateCollection, demoFeatures } from '../.test-build/geojson.js';
+const collection = (geometry) => ({ type: 'FeatureCollection', features: [{ type: 'Feature', properties: { name: 'Test' }, geometry }] });
+test('示例可往返，未知属性不传播', () => { const demo = demoFeatures(); demo.features[0].properties.secret = 'x'; const normalized = validateCollection(JSON.parse(JSON.stringify(demo))); assert.equal(normalized.features.length, 3); assert.deepEqual(normalized.features[0].properties, { name: '学习图书馆' }); });
+test('点线面校验与稳定 id', () => { assert.equal(validateCollection(collection({ type: 'Point', coordinates: [121, 31] })).features[0].id, 'import-1'); assert.equal(validateCollection(collection({ type: 'LineString', coordinates: [[0,0],[1,1]] })).features[0].geometry.type, 'LineString'); assert.equal(validateCollection(collection({ type: 'Polygon', coordinates: [[[0,0],[1,0],[1,1],[0,0]]] })).features[0].geometry.type, 'Polygon'); });
+test('拒绝非法坐标、未闭合面与不支持的几何', () => { for (const geometry of [{type:'Point',coordinates:[200,0]},{type:'Point',coordinates:[0,90]},{type:'Point',coordinates:[NaN,0]},{type:'Polygon',coordinates:[[[0,0],[1,0],[1,1],[0,1]]]},{type:'LineString',coordinates:[[0,0]]},{type:'MultiPoint',coordinates:[]}]) assert.throws(() => validateCollection(collection(geometry))); });
+test('容量与重复标识保护', () => { const demo = demoFeatures(); demo.features.push(demo.features[0]); assert.throws(() => validateCollection(demo), /重复/); assert.throws(() => validateCollection({type:'FeatureCollection',features:Array(201).fill({})}), /200/); });
