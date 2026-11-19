@@ -1,5 +1,7 @@
 # Map Lab · OpenLayers 地图交互教学版
 
+**[在线体验 · 打开 OpenLayers 地图实验室](https://nemo-crypto.github.io/openlayers/)**
+
 使用 **OpenLayers 10 + TypeScript + Vite** 从零搭建交互地图实验室。学习图层、要素、坐标投影、绘制、选择、编辑和 GeoJSON 数据往返。旧 page 目录及第三方脚本副本已移除，当前示例不依赖旧业务代码。
 
 <!-- BEGIN project-discovery -->
