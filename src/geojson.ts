@@ -12,6 +12,8 @@ export function validateCollection(value: unknown): Collection {
   return [v[0], v[1]];
  };
  const ids = new Set<string>();
+ // 先预留文件内显式 ID，避免为前面的无 ID 要素生成同名标识。
+ const reserved = new Set(value.features.filter((raw: unknown) => object(raw) && raw.id !== undefined).map((raw: { id: unknown }) => String(raw.id)));
  const features = value.features.map((raw: unknown, index: number): GeoFeature => {
   if (!object(raw) || raw.type !== 'Feature' || !object(raw.geometry)) throw new Error('要素或 geometry 无效');
   const g = raw.geometry; let geometry: Geometry;
@@ -28,7 +30,11 @@ export function validateCollection(value: unknown): Collection {
     return points;
    }) };
   } else throw new Error('本课程只接受 Point、LineString 和 Polygon');
-  const id = raw.id === undefined ? `import-${index + 1}` : String(raw.id);
+  let id = raw.id === undefined ? `import-${index + 1}` : String(raw.id);
+  if (raw.id === undefined) {
+   let suffix = 1;
+   while (reserved.has(id) || ids.has(id)) id = `import-${index + 1}-${suffix++}`;
+  }
   if (!['string', 'number', 'undefined'].includes(typeof raw.id) || !id || id.length > 80 || ids.has(id)) throw new Error('要素 id 不能为空、过长或重复');
   ids.add(id);
   const props = object(raw.properties) ? raw.properties : {};
