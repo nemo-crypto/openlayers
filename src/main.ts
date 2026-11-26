@@ -31,7 +31,8 @@ function refresh() {
  updateTool();
 }
 let confirmed: (() => void) | null = null;
-function confirm(title: string, run: () => void) { $('confirm-title').textContent = title; confirmed = run; $<HTMLDialogElement>('confirm').showModal(); }
+let importVersion = 0;
+function confirm(title: string, run: () => void) { importVersion++; $('confirm-title').textContent = title; confirmed = run; $<HTMLDialogElement>('confirm').showModal(); }
 $('cancel').addEventListener('click', () => $<HTMLDialogElement>('confirm').close()); $('confirm-go').addEventListener('click', () => { $<HTMLDialogElement>('confirm').close(); confirmed?.(); confirmed = null; });
 document.querySelectorAll<HTMLButtonElement>('[data-tool]').forEach((button) => button.addEventListener('click', () => tool(button.dataset.tool as Tool)));
 $('fit').addEventListener('click', app.fit); $('online').addEventListener('change', () => { const enabled = $<HTMLInputElement>('online').checked; app.toggleOnline(enabled); $('basemap-mode').textContent = enabled ? 'OpenStreetMap' : '离线底图'; });
@@ -41,6 +42,25 @@ $('reset').addEventListener('click', () => confirm('恢复示例数据？', () =
 $('clear').addEventListener('click', () => confirm('清空当前图层？', () => { app.clear(); refresh(); message('图层已清空。'); }));
 $('export').addEventListener('click', () => { try { const data = app.exportData(); const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/geo+json' })); const a = document.createElement('a'); a.href = url; a.download = 'map-lab.geojson'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); message(`已导出 ${data.features.length} 个要素，坐标为 WGS84。`); } catch (error) { message((error as Error).message, true); } });
 $('import').addEventListener('click', () => $('file').click());
-$('file').addEventListener('change', async () => { const file = $<HTMLInputElement>('file').files?.[0]; if (!file) return; try { if (file.size > 1024 * 1024) throw new Error('导入文件不能超过 1MB'); const data = validateCollection(JSON.parse(await file.text())); confirm(`导入 ${data.features.length} 个要素并替换当前图层？`, () => { app.replace(data); message('导入成功；显示投影已转换为 EPSG:3857。'); }); } catch (error) { message(`导入失败：${(error as Error).message}`, true); } finally { $<HTMLInputElement>('file').value = ''; } });
+$('file').addEventListener('change', async () => {
+ const input = $<HTMLInputElement>('file');
+ const file = input.files?.[0];
+ if (!file) return;
+ const version = ++importVersion;
+ try {
+  if (file.size > 1024 * 1024) throw new Error('导入文件不能超过 1MB');
+  const text = await file.text();
+  if (version !== importVersion) return;
+  const data = validateCollection(JSON.parse(text));
+  confirm(`导入 ${data.features.length} 个要素并替换当前图层？`, () => {
+   app.replace(data);
+   message('导入成功；显示投影已转换为 EPSG:3857。');
+  });
+ } catch (error) {
+  if (version === importVersion) message(`导入失败：${(error as Error).message}`, true);
+ } finally {
+  if (input.files?.[0] === file) input.value = '';
+ }
+});
 window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !$<HTMLDialogElement>('confirm').open) tool('select'); });
 new ResizeObserver(() => app.map.updateSize()).observe($('map'));
